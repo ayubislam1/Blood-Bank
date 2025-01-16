@@ -3,18 +3,20 @@ import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router";
 import { MenuIcon } from "lucide-react";
+import useAuth from "../../hooks/useAuth";
+import { auth } from "../../Firebase/firebase.config";
 
-const user = {
-	displayName: "John Doe",
-	photoURL: "https://via.placeholder.com/40",
-};
-
-export default function Navbar() {
+const Navbar = () => {
+	const { user ,logOut} = useAuth();
 	const [showDisplayName, setShowDisplayName] = useState(false);
 	const [dropdownOpen, setDropdownOpen] = useState(false);
 
 	const handleEvent = () => {
-		console.log("User logged out");
+		
+			logOut(auth).then(() => {
+				console.log("logout");
+			});
+		
 	};
 
 	useEffect(() => {
@@ -143,14 +145,14 @@ export default function Navbar() {
 							</div>
 							{dropdownOpen && (
 								<div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-md z-50">
-									{user && (
+									{/* {user && (
 										<Link
 											to="/dashboard"
 											className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
 										>
 											Dashboard
 										</Link>
-									)}
+									)} */}
 									<Button
 										variant="ghost"
 										className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-400"
@@ -181,4 +183,5 @@ export default function Navbar() {
 			</nav>
 		</header>
 	);
-}
+};
+export default Navbar;
