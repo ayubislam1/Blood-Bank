@@ -66,6 +66,14 @@ const Navbar = () => {
 								>
 									Funding
 								</Link>
+								<Link
+									
+									className="flex w-full items-center py-2 text-lg font-semibold"
+									onClick={handleEvent}
+								>
+									Log Out
+								</Link>
+								
 							</>
 						) : (
 							<>
@@ -145,14 +153,14 @@ const Navbar = () => {
 							</div>
 							{dropdownOpen && (
 								<div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-md z-50">
-									{/* {user && (
+									{user && (
 										<Link
-											to="/dashboard"
+											to={`/dashboard/profile/${user.email}`}
 											className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
 										>
 											Dashboard
 										</Link>
-									)} */}
+									)}
 									<Button
 										variant="ghost"
 										className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-400"
