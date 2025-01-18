@@ -14,6 +14,7 @@ import BloodDonationRequests from "../pages/BloodDonationRequests";
 import BloodDonationRequestDetails from "../pages/BloodDonationRequestDetails";
 import ViewDonationRequest from "../pages/Dashboard/Donor/ViewDonationRequest";
 import EditDonationRequest from "../pages/Dashboard/Donor/EditDonationRequest";
+import AdminDashboard from "../pages/Dashboard/Admin/AdminDashboard";
 
 const router = createBrowserRouter([
 	{
@@ -61,6 +62,13 @@ const router = createBrowserRouter([
 				loader: ({ params }) =>
 					fetch(`http://localhost:7000/all-users/${params.email}`),
 			},
+
+			{
+				path:"/dashboard/admin",
+				element:<AdminDashboard></AdminDashboard>
+
+			},
+			//donor pages
 			{
 				path: "/dashboard/donorHome",
 				element: <DonorHome></DonorHome>,

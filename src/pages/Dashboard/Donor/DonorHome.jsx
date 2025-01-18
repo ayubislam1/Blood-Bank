@@ -79,7 +79,7 @@ const DonorHome = () => {
 								<th className="px-4 py-2">Time</th>
 								<th className="px-4 py-2">Blood Group</th>
 								<th className="px-4 py-2">Status</th>
-								<th className="px-4 py-2">Actions</th>
+								<th className="px-4 md:px-36  py-2">Actions</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -103,8 +103,9 @@ const DonorHome = () => {
 											{req.status}
 										</span>
 									</td>
-									<td className="px-4 py-2 space-x-2 flex justify-center items-center">
-										{req.status === "inprogress" && (
+									<td className="px-4 py-2 space-x-2 ">
+										<div className="md:-ml-20 flex justify-center items-center gap-2">
+                                        {req.status === "inprogress" && (
 											<>
 												<Button
 													onClick={() => handleStatusChange(req._id, "done")}
@@ -138,6 +139,7 @@ const DonorHome = () => {
 										>
 											Delete
 										</Button>
+                                        </div>
 									</td>
 								</tr>
 							))}
