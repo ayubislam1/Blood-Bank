@@ -30,7 +30,8 @@ const Login = () => {
 		const pass = e.target.pass.value;
 
 		SignIn(email, pass)
-			.then(() => {
+			.then((res) => {
+				console.log(res)
 				setLoading(false);
 				navigate("/");
 			})

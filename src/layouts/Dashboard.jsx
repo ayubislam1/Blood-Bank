@@ -33,7 +33,7 @@ const Dashboard = () => {
                     </NavLink>
 
                     <NavLink
-                        to="/dashboard/other"
+                        to="/dashboard/donorHome"
                         end
                         className={({ isActive }) =>
                             `block px-4 py-2 rounded-lg transition ${
@@ -41,7 +41,27 @@ const Dashboard = () => {
                             }`
                         }
                     >
-                        Other Page
+                        DonorHome
+                    </NavLink>
+                    <NavLink
+                        to="/dashboard/myRequest"
+                        className={({ isActive }) =>
+                            `block px-4 py-2 rounded-lg transition ${
+                                isActive ? "bg-primary text-white" : "hover:bg-gray-700"
+                            }`
+                        }
+                    >
+                        MyDonationRequest
+                    </NavLink>
+                    <NavLink
+                        to="/dashboard/createRequest"
+                        className={({ isActive }) =>
+                            `block px-4 py-2 rounded-lg transition ${
+                                isActive ? "bg-primary text-white" : "hover:bg-gray-700"
+                            }`
+                        }
+                    >
+                        CreateDonationRequest
                     </NavLink>
                     <NavLink
                         to="/"
