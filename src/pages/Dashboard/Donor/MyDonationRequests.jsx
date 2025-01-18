@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
 	Select,
 	SelectTrigger,
@@ -9,38 +8,33 @@ import {
 import { Table } from "../../../components/ui/table";
 import { Button } from "../../../components/ui/button";
 import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
 import userDonation from "../../../hooks/userDonation";
-
-const mockDonationRequests = [
-	{
-		id: 1,
-		recipientName: "John Doe",
-		recipientDistrict: "Dhaka",
-		recipientUpazila: "Mirpur",
-		donationDate: "2025-01-20",
-		donationTime: "10:00 AM",
-		bloodGroup: "A+",
-		donationStatus: "inprogress",
-		donorInfo: { name: "Alice", email: "alice@example.com" },
-	},
-];
+import useAuth from "../../../hooks/useAuth";
 
 const MyDonationRequests = () => {
-	const [userDonationData] = userDonation();
+	const [userDonationData, isLoading] = userDonation();
 	const [donationRequests, setDonationRequests] = useState([]);
 	const [filter, setFilter] = useState("all");
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 5;
 	const navigate = useNavigate();
+	const { user } = useAuth();
 
 	useEffect(() => {
-		setDonationRequests(mockDonationRequests);
-	}, []);
+		if (userDonationData) {
+			setDonationRequests(userDonationData);
+		}
+	}, [userDonationData]);
+
+	const donateData = donationRequests.filter(
+		(users) => users?.email === user?.email
+	);
 
 	const filteredRequests =
 		filter === "all"
-			? donationRequests
-			: donationRequests.filter((req) => req.donationStatus === filter);
+			? donateData
+			: donateData.filter((req) => req.status === filter);
 
 	const paginatedRequests = filteredRequests.slice(
 		(currentPage - 1) * itemsPerPage,
@@ -50,11 +44,12 @@ const MyDonationRequests = () => {
 	const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
 
 	return (
-		<div className="p-6">
-			<h1 className="text-2xl font-bold">My Donation Requests</h1>
-			<div className="mt-4">
+		<div className="p-6 space-y-6 bg-gradient-to-b from-white to-red-50 min-h-screen">
+			<h1 className="text-3xl font-bold text-red-600">My Donation Requests</h1>
+
+			<div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
 				<Select onValueChange={setFilter} value={filter}>
-					<SelectTrigger className="w-full">
+					<SelectTrigger className="w-full lg:w-64 border border-red-300 rounded-md shadow-sm bg-red-50">
 						<SelectValue placeholder="Filter by status" />
 					</SelectTrigger>
 					<SelectContent>
@@ -65,68 +60,109 @@ const MyDonationRequests = () => {
 						<SelectItem value="canceled">Canceled</SelectItem>
 					</SelectContent>
 				</Select>
-				{paginatedRequests.length > 0 ? (
-					<>
-						<Table className="mt-4">
-							<thead>
-								<tr>
-									<th>Recipient Name</th>
-									<th>Location</th>
-									<th>Date</th>
-									<th>Time</th>
-									<th>Blood Group</th>
-									<th>Status</th>
-									<th>Actions</th>
-								</tr>
-							</thead>
-							<tbody>
-								{paginatedRequests.map((req) => (
-									<tr key={req.id}>
-										<td>{req.recipientName}</td>
-										<td>{`${req.recipientDistrict}, ${req.recipientUpazila}`}</td>
-										<td>{req.donationDate}</td>
-										<td>{req.donationTime}</td>
-										<td>{req.bloodGroup}</td>
-										<td>{req.donationStatus}</td>
-										<td>
+			</div>
+
+			{isLoading ? (
+				<div className="text-center mt-4 text-gray-500">
+					Loading donation requests...
+				</div>
+			) : (
+				<>
+					<Table className="table-auto w-full border border-red-300 rounded-lg shadow-md">
+						<thead>
+							<tr className="bg-red-100 text-red-700">
+								{[
+									"Recipient Name",
+									"Location",
+									"Date",
+									"Time",
+									"Blood Group",
+									"Status",
+									"Actions",
+								].map((header) => (
+									<th
+										key={header}
+										className="px-4 py-3 text-left text-sm font-bold border-b border-red-200"
+									>
+										{header}
+									</th>
+								))}
+							</tr>
+						</thead>
+						<tbody>
+							{paginatedRequests.map((req) => (
+								<tr
+									key={req._id}
+									className="hover:bg-red-50 border-b border-red-200"
+								>
+									<td className="px-4 py-3 align-middle">
+										{req.recipientName}
+									</td>
+									<td className="px-4 py-3 align-middle">{`${req.district}, ${req.upazila}`}</td>
+									<td className="px-4 py-3 align-middle">{req.donationDate}</td>
+									<td className="px-4 py-3 align-middle">{req.donationTime}</td>
+									<td className="px-4 py-3 font-bold text-red-600 align-middle">
+										{req.bloodGroup}
+									</td>
+									<td className="px-4 py-3 align-middle">
+										<span
+											className={`px-3 py-1 text-xs rounded-full ${
+												req.status === "done"
+													? "bg-green-100 text-green-700"
+													: req.status === "pending"
+													? "bg-yellow-100 text-yellow-700"
+													: req.status === "inprogress"
+													? "bg-orange-100 text-orange-700"
+													: "bg-red-100 text-red-700"
+											}`}
+										>
+											{req.status}
+										</span>
+									</td>
+									<td className="px-4 py-3 text-left ">
+										<div className="flex justify-center gap-2">
 											<Button
-												className="mr-2"
-												onClick={() => navigate(`/dashboard/edit/${req.id}`)}
+												variant="outline"
+												className="text-sm text-red-700 border-red-500"
+												onClick={() => navigate(`/dashboard/edit/${req._id}`)}
 											>
 												Edit
 											</Button>
 											<Button
-												onClick={() => navigate(`/dashboard/view/${req.id}`)}
+												variant="solid"
+												className="text-sm bg-red-500 text-white"
+												onClick={() => navigate(`/dashboard/view/${req._id}`)}
 											>
 												View
 											</Button>
-										</td>
-									</tr>
-								))}
-							</tbody>
-						</Table>
-						<div className="flex justify-between items-center mt-4">
-							<Button
-								disabled={currentPage === 1}
-								onClick={() => setCurrentPage(currentPage - 1)}
-							>
-								Previous
-							</Button>
-							<span>
-								Page {currentPage} of {totalPages}
-							</span>
-							<Button
-								disabled={currentPage === totalPages}
-								onClick={() => setCurrentPage(currentPage + 1)}
-							>
-								Next
-							</Button>
-						</div>
-					</>
-				) : (
-					<p className="mt-4">No donation requests found.</p>
-				)}
-			</div>
+										</div>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</Table>
+
+					<div className="flex justify-between items-center mt-6">
+						<Button
+							disabled={currentPage === 1}
+							className="px-4 py-2 rounded-md bg-red-200 text-red-700 hover:bg-white hover:text-red-700 hover:border hover:border-red-200"
+							onClick={() => setCurrentPage(currentPage - 1)}
+						>
+							Previous
+						</Button>
+						<span className="text-sm">
+							Page {currentPage} of {totalPages}
+						</span>
+						<Button
+							disabled={currentPage === totalPages}
+							className="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-white hover:text-red-700 hover:border hover:border-red-200"
+							onClick={() => setCurrentPage(currentPage + 1)}
+						>
+							Next
+						</Button>
+					</div>
+				</>
+			)}
 		</div>
 	);
 };
