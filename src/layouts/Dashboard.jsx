@@ -63,7 +63,17 @@ const Dashboard = () => {
                     >
                         All Donation Requests
                     </NavLink>
-
+                    <NavLink
+                        to="/dashboard/content-management"
+                        end
+                        className={({ isActive }) =>
+                            `block px-4 py-3 rounded-lg text-lg font-medium transition ${
+                                isActive ? "bg-white text-red-700 shadow-md" : "hover:bg-red-700"
+                            }`
+                        }
+                    >
+                       Content Management
+                    </NavLink>
                     <NavLink
                         to="/dashboard/donorHome"
                         end

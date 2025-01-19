@@ -17,6 +17,8 @@ import EditDonationRequest from "../pages/Dashboard/Donor/EditDonationRequest";
 import AdminDashboard from "../pages/Dashboard/Admin/AdminDashboard";
 import AllUsersPage from "../pages/Dashboard/Admin/AllUsersPage";
 import AllDonationRequests from "../pages/Dashboard/Admin/AllDonationRequests";
+import ContentManagement from "../pages/Dashboard/Admin/ContentManagement";
+import AddBlog from "../pages/Dashboard/Admin/AddBlog";
 
 const router = createBrowserRouter([
 	{
@@ -77,6 +79,14 @@ const router = createBrowserRouter([
 			{
 				path:"/dashboard/all-donation-request",
 				element:<AllDonationRequests></AllDonationRequests>
+			},
+			{
+				path:"/dashboard/content-management",
+				element:<ContentManagement></ContentManagement>
+			},
+			{
+				path:"/dashboard/add-blog",
+				element:<AddBlog></AddBlog>
 			},
 			//donor pages
 			{

@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 const AllUsersPage = () => {
 	const [filteredStatus, setFilteredStatus] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
-	const pageSize = 5;
+	const pageSize = 7;
 	const [openMenu, setOpenMenu] = useState(null);
 	const axiosSecure = useAxiosSecure();
 
@@ -111,7 +111,7 @@ const AllUsersPage = () => {
 								<td className="p-4">
 									<div className="relative">
 										<Button
-											className="text-gray-600"
+											className="bg-red-600 hover:bg-white hover:text-red-500 hover:border hover:border-red-300"
 											onClick={() => handleMenuToggle(user._id)}
 										>
 											<MoreVertical />
@@ -173,7 +173,7 @@ const AllUsersPage = () => {
 
 			<div className="flex justify-between mt-4">
 				<Button
-					className="px-4 py-2 bg-blue-500 text-white rounded-md"
+					className="px-4 py-2 bg-red-500 text-white hover:bg-white hover:text-red-700 hover:border hover:border-red-200 rounded-md"
 					onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
 					disabled={currentPage === 1}
 				>
@@ -183,7 +183,7 @@ const AllUsersPage = () => {
 					Page {currentPage} of {totalPages}
 				</span>
 				<Button
-					className="px-4 py-2 bg-blue-500 text-white rounded-md"
+					className="px-4 py-2 bg-red-500 text-white hover:bg-white hover:text-red-700 hover:border hover:border-red-200 rounded-md"
 					onClick={() =>
 						setCurrentPage((prev) => Math.min(prev + 1, totalPages))
 					}
