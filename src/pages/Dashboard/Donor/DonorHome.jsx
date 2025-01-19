@@ -14,7 +14,7 @@ const DonorHome = () => {
 
 	useEffect(() => {
 		setDonationRequests(userDonationData.slice(0, 3));
-	}, [userDonationData]);
+	}, []);
 
 	const handleStatusChange = (id, status) => {
 		setDonationRequests((prev) =>

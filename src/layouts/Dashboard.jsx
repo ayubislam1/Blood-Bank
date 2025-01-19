@@ -41,6 +41,17 @@ const Dashboard = () => {
                     >
                         Admin Home
                     </NavLink>
+                    <NavLink
+                        to="/dashboard/allUsers"
+                        end
+                        className={({ isActive }) =>
+                            `block px-4 py-3 rounded-lg text-lg font-medium transition ${
+                                isActive ? "bg-white text-red-700 shadow-md" : "hover:bg-red-700"
+                            }`
+                        }
+                    >
+                        All Users
+                    </NavLink>
 
                     <NavLink
                         to="/dashboard/donorHome"

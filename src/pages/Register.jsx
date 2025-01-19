@@ -50,7 +50,6 @@ export default function Register() {
 
 		setErrormessage("");
 
-		
 		if (pass !== confirmPass) {
 			setErrormessage("Passwords do not match.");
 			return;
@@ -66,7 +65,6 @@ export default function Register() {
 		}
 
 		try {
-		
 			const formData = new FormData();
 			formData.append("image", photoUrl[0]);
 
@@ -85,18 +83,17 @@ export default function Register() {
 				district,
 				upazila,
 				status: "active",
+				role: "donor",
 			};
 
 			console.log("User details with image:", newUser);
 
-			
 			const userResult = await CreateUser(email, pass);
 			console.log("Firebase user created:", userResult.user);
 
 			await updateName(name, imageUrl);
 			console.log("User profile updated successfully.");
 
-		
 			const response = await axiosSecure.post("/all-users", newUser);
 
 			if (response.data.insertedId) {
@@ -108,18 +105,13 @@ export default function Register() {
 					timer: 1500,
 				});
 
-			
 				navigate("/");
 				form.reset();
 			} else {
-				console.log(
-					"Failed to save user to the database. Please try again."
-				);
+				console.log("Failed to save user to the database. Please try again.");
 			}
 		} catch (error) {
-			
 			console.error("An error occurred:", error.response || error.message);
-
 		}
 	};
 
@@ -205,6 +197,7 @@ export default function Register() {
 								<option value="Chuadanga">Chuadanga</option>
 								<option value="Cox's Bazar">Cox's Bazar</option>
 								<option value="Cumilla">Cumilla</option>
+								<option value="Dhaka">Dhaka</option>
 								<option value="Dinajpur">Dinajpur</option>
 								<option value="Faridpur">Faridpur</option>
 								<option value="Feni">Feni</option>

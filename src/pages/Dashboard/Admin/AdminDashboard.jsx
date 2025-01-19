@@ -55,7 +55,7 @@ const AdminDashboard = () => {
             <Heart className="text-red-500 h-10 w-10" />
           </div>
           <h3 className="text-xl font-semibold text-gray-700">Total Donation Requests</h3>
-          <p className="text-3xl font-bold text-red-700">{stats?.donations}</p>
+          <p className="text-3xl font-bold text-red-700">{stats?.donors}</p>
         </div>
       </div>
     </div>
