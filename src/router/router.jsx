@@ -23,6 +23,8 @@ import Blog from "../pages/Blog";
 import VolunteerDashboard from "../pages/Volunteer/VolunteerDashboard";
 import VolunteerDonationRequests from "../pages/Volunteer/VolunteerDonationRequests";
 import SearchPage from "../pages/SearchPage";
+import FundingPage from "../pages/FundingPage";
+import Payment from "../pages/Payment";
 
 const router = createBrowserRouter([
 	{
@@ -62,6 +64,14 @@ const router = createBrowserRouter([
 				path: "/search",
 				element: <SearchPage></SearchPage>,
 			},
+			{
+				path: "/funding",
+				element: <FundingPage></FundingPage>,
+			},
+			{
+				path:"/payment",
+				element:<Payment></Payment>
+			}
 		],
 	},
 	{
