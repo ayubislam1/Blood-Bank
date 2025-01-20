@@ -2,11 +2,12 @@ import React from "react";
 import { Users, DollarSign, Heart } from "lucide-react"; 
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
+import useAuth from "../../../hooks/useAuth";
 
 const AdminDashboard = () => {
 
     const axiosSecure = useAxiosSecure();
-	
+	const{user}=useAuth()
 	const { data: stats } = useQuery({
 		queryKey: ["stats"],
 		queryFn: async () => {
@@ -22,7 +23,7 @@ const AdminDashboard = () => {
       
       <div className="bg-gray-100 p-6 rounded-lg shadow-md mb-8">
         <h1 className="text-3xl font-semibold text-center text-red-700">
-          Welcome to the Admin Dashboard
+         Welcome to the {user.displayName}
         </h1>
         <p className="text-center text-gray-600 mt-4">
           Manage the blood donation process and track key statistics.

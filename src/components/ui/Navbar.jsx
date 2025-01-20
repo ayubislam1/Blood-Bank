@@ -133,7 +133,7 @@ const Navbar = () => {
 							Funding
 						</Link>
 						<div className="relative">
-							{/* Avatar Dropdown */}
+							
 							<div
 								className="flex items-center gap-2 cursor-pointer"
 								onMouseEnter={() => setShowDisplayName(true)}

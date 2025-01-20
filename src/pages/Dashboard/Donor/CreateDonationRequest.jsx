@@ -431,7 +431,6 @@ const CreateDonationRequest = () => {
 					required
 				/>
 
-				{/* Submit Button */}
 				<Button
 					type="submit"
 					className="w-full bg-blue-500 text-white hover:bg-blue-600"

@@ -8,11 +8,12 @@ import {
 import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import useAxiosPublic from "../../hooks/useAxiosPublic";
+
 import { useState } from "react";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const VolunteerDonationRequests = () => {
-	const axiosPublic = useAxiosPublic();
+	const axiosSecure = useAxiosSecure();
 	const {
 		data: donationRequests = [],
 		isLoading,
@@ -20,7 +21,7 @@ const VolunteerDonationRequests = () => {
 	} = useQuery({
 		queryKey: ["all-donations"],
 		queryFn: async () => {
-			const res = await axiosPublic.get("/users-donation");
+			const res = await axiosSecure.get("/users-donation");
 			return res.data;
 		},
 	});
@@ -44,7 +45,7 @@ const VolunteerDonationRequests = () => {
 	const updateStatus = async (id, newStatus) => {
 		try {
 		
-			const response = await axiosPublic.patch(`/users-donation/${id}/status`, {
+			const response = await axiosSecure.patch(`/users-donation/${id}/status`, {
 				status: newStatus,
 			});
 

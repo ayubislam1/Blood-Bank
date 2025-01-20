@@ -2,18 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
 
-import useAxiosPublic from "../hooks/useAxiosPublic";
+
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const BloodDonationRequests = () => {
 	const navigate = useNavigate();
 	const [requests, setRequests] = useState([]);
 	const [loading, setLoading] = useState(true);
-	const axiosPublic = useAxiosPublic();
+	const axiosSecure=useAxiosSecure()
 
 	useEffect(() => {
 		const fetchRequests = async () => {
 			try {
-				const response = await axiosPublic.get(
+				const response = await axiosSecure.get(
 					"/users-donation?status=pending"
 				);
 				setRequests(response.data);
