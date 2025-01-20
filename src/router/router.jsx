@@ -20,6 +20,7 @@ import AllDonationRequests from "../pages/Dashboard/Admin/AllDonationRequests";
 import ContentManagement from "../pages/Dashboard/Admin/ContentManagement";
 import AddBlog from "../pages/Dashboard/Admin/AddBlog";
 import Blog from "../pages/Blog";
+import VolunteerDashboard from "../pages/Volunteer/VolunteerDashboard";
 
 const router = createBrowserRouter([
 	{
@@ -112,6 +113,12 @@ const router = createBrowserRouter([
 			{
 				path: "/dashboard/view/:id",
 				element: <ViewDonationRequest></ViewDonationRequest>,
+			},
+
+			//volunteer
+			{
+				path: "/dashboard/volunteer-home",
+				element: <VolunteerDashboard></VolunteerDashboard>,
 			},
 		],
 	},
