@@ -19,6 +19,7 @@ import AllUsersPage from "../pages/Dashboard/Admin/AllUsersPage";
 import AllDonationRequests from "../pages/Dashboard/Admin/AllDonationRequests";
 import ContentManagement from "../pages/Dashboard/Admin/ContentManagement";
 import AddBlog from "../pages/Dashboard/Admin/AddBlog";
+import Blog from "../pages/Blog";
 
 const router = createBrowserRouter([
 	{
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
 					</PrivateRouter>
 				),
 			},
+			{
+				path: "/blog",
+				element: <Blog></Blog>,
+			},
 		],
 	},
 	{
@@ -68,25 +73,24 @@ const router = createBrowserRouter([
 			},
 
 			{
-				path:"/dashboard/admin",
-				element:<AdminDashboard></AdminDashboard>
-
+				path: "/dashboard/admin",
+				element: <AdminDashboard></AdminDashboard>,
 			},
 			{
-				path:"/dashboard/allUsers",
-				element:<AllUsersPage></AllUsersPage>
+				path: "/dashboard/allUsers",
+				element: <AllUsersPage></AllUsersPage>,
 			},
 			{
-				path:"/dashboard/all-donation-request",
-				element:<AllDonationRequests></AllDonationRequests>
+				path: "/dashboard/all-donation-request",
+				element: <AllDonationRequests></AllDonationRequests>,
 			},
 			{
-				path:"/dashboard/content-management",
-				element:<ContentManagement></ContentManagement>
+				path: "/dashboard/content-management",
+				element: <ContentManagement></ContentManagement>,
 			},
 			{
-				path:"/dashboard/add-blog",
-				element:<AddBlog></AddBlog>
+				path: "/dashboard/add-blog",
+				element: <AddBlog></AddBlog>,
 			},
 			//donor pages
 			{
@@ -96,20 +100,19 @@ const router = createBrowserRouter([
 			{
 				path: "/dashboard/myRequest",
 				element: <MyDonationRequests></MyDonationRequests>,
-				
 			},
 			{
 				path: "/dashboard/createRequest",
 				element: <CreateDonationRequest></CreateDonationRequest>,
 			},
 			{
-				path:"/dashboard/edit/:id",
-				element:<EditDonationRequest></EditDonationRequest>
+				path: "/dashboard/edit/:id",
+				element: <EditDonationRequest></EditDonationRequest>,
 			},
 			{
-				path:"/dashboard/view/:id",
-				element:<ViewDonationRequest></ViewDonationRequest>
-			}
+				path: "/dashboard/view/:id",
+				element: <ViewDonationRequest></ViewDonationRequest>,
+			},
 		],
 	},
 ]);
