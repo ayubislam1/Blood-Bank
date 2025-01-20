@@ -70,8 +70,8 @@ const router = createBrowserRouter([
 						<ProfilePage></ProfilePage>
 					</PrivateRouter>
 				),
-				loader: ({ params }) =>
-					fetch(`http://localhost:7000/all-users/${params.email}`),
+				loader: async ({ params }) =>
+					await fetch(`http://localhost:7000/all-users/${params.email}`),
 			},
 
 			{
@@ -122,9 +122,9 @@ const router = createBrowserRouter([
 				element: <VolunteerDashboard></VolunteerDashboard>,
 			},
 			{
-				path:"/dashboard/volunteer-donation-request",
-				element:<VolunteerDonationRequests></VolunteerDonationRequests>
-			}
+				path: "/dashboard/volunteer-donation-request",
+				element: <VolunteerDonationRequests></VolunteerDonationRequests>,
+			},
 		],
 	},
 ]);

@@ -13,12 +13,13 @@ import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
 import { FaCheck, FaTimes, FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
+import useAdmin from "../../../hooks/useAdmin";
 
 const ContentManagement = () => {
 	const [filter, setFilter] = useState("all");
 	const navigate = useNavigate();
 	const axiosPublic = useAxiosPublic();
-
+	const [isAdmin] = useAdmin();
 	const {
 		data: blogs,
 		isLoading,
@@ -142,12 +143,22 @@ const ContentManagement = () => {
 								>
 									<FaTimes className="mr-2" /> Unpublish
 								</Button>
-								<Button
-									onClick={() => handleDelete(blog._id)}
-									className="bg-red-500 text-white hover:bg-red-600"
-								>
-									<FaTrash className="mr-2" /> Delete
-								</Button>
+								{isAdmin ? (
+									<Button
+										onClick={() => handleDelete(blog._id)}
+										className="bg-red-500 text-white hover:bg-red-600"
+									>
+										<FaTrash className="mr-2" /> Delete
+									</Button>
+								) : (
+									<Button
+										onClick={() => handleDelete(blog._id)}
+										className="bg-red-500 text-white hover:bg-red-600"
+										disabled
+									>
+										<FaTrash className="mr-2" /> Delete
+									</Button>
+								)}
 							</CardFooter>
 						</Card>
 					))}

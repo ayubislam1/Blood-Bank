@@ -5,15 +5,19 @@ import { Table } from "../../../components/ui/table";
 import Swal from "sweetalert2";
 import userDonation from "../../../hooks/userDonation";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import useAuth from "../../../hooks/useAuth";
 
 const DonorHome = () => {
-	const [userDonationData, isLoading,refetch] = userDonation();
+	const [userDonationData, isLoading, refetch] = userDonation();
 	const [donationRequests, setDonationRequests] = useState([]);
 	const navigate = useNavigate();
 	const axiosSecure = useAxiosSecure();
-
+	const { user } = useAuth();
+	const filteredUsers = userDonationData.filter(
+		(users) => users.email === user?.email
+	);
 	useEffect(() => {
-		setDonationRequests(userDonationData.slice(0, 3));
+		setDonationRequests(filteredUsers.slice(0, 3));
 	}, []);
 
 	const handleStatusChange = (id, status) => {
@@ -105,41 +109,43 @@ const DonorHome = () => {
 									</td>
 									<td className="px-4 py-2 space-x-2 ">
 										<div className="md:-ml-20 flex justify-center items-center gap-2">
-                                        {req.status === "inprogress" && (
-											<>
-												<Button
-													onClick={() => handleStatusChange(req._id, "done")}
-													className="bg-green-500 hover:bg-green-600"
-												>
-													Done
-												</Button>
-												<Button
-													onClick={() => handleStatusChange(req._id, "canceled")}
-													className="bg-red-500 hover:bg-red-600"
-												>
-													Cancel
-												</Button>
-											</>
-										)}
-										<Button
-											onClick={() => navigate(`/dashboard/edit/${req._id}`)}
-											className="bg-blue-500 hover:bg-blue-600"
-										>
-											Edit
-										</Button>
-										<Button
-											onClick={() => navigate(`/dashboard/view/${req._id}`)}
-											className="bg-gray-500 hover:bg-gray-600"
-										>
-											View
-										</Button>
-										<Button
-											onClick={() => handleDelete(req._id)}
-											className="bg-red-500 hover:bg-red-600"
-										>
-											Delete
-										</Button>
-                                        </div>
+											{req.status === "inprogress" && (
+												<>
+													<Button
+														onClick={() => handleStatusChange(req._id, "done")}
+														className="bg-green-500 hover:bg-green-600"
+													>
+														Done
+													</Button>
+													<Button
+														onClick={() =>
+															handleStatusChange(req._id, "canceled")
+														}
+														className="bg-red-500 hover:bg-red-600"
+													>
+														Cancel
+													</Button>
+												</>
+											)}
+											<Button
+												onClick={() => navigate(`/dashboard/edit/${req._id}`)}
+												className="bg-blue-500 hover:bg-blue-600"
+											>
+												Edit
+											</Button>
+											<Button
+												onClick={() => navigate(`/dashboard/view/${req._id}`)}
+												className="bg-gray-500 hover:bg-gray-600"
+											>
+												View
+											</Button>
+											<Button
+												onClick={() => handleDelete(req._id)}
+												className="bg-red-500 hover:bg-red-600"
+											>
+												Delete
+											</Button>
+										</div>
 									</td>
 								</tr>
 							))}
@@ -147,11 +153,7 @@ const DonorHome = () => {
 					</Table>
 				) : (
 					<div className="text-center mt-4">
-						<img
-							src="/empty-state.svg"
-							alt="No Data"
-							className="w-40 h-40 mx-auto"
-						/>
+						
 						<p className="text-lg mt-4">
 							No recent donation requests available.
 						</p>

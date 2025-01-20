@@ -41,11 +41,11 @@ const BloodDonationRequestDetails = () => {
       showCancelButton: true,
       confirmButtonText: "Confirm",
       cancelButtonText: "Cancel",
-      confirmButtonColor: "#ff4d4d", // Blood red button color
+      confirmButtonColor: "#ff4d4d",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axiosSecure.patch(`/users-donation/${id}`);
+          await axiosSecure.patch(`/users-donation/${id}`,{name:user.displayName,email:user.email});
           Swal.fire("Success", "Donation confirmed.", "success");
           navigate("/donation-requests");
         } catch (error) {

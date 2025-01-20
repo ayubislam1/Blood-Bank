@@ -6,17 +6,17 @@ import { useQuery } from '@tanstack/react-query';
 const useDonor = () => {
     const axiosSecure = useAxiosSecure();
 	const { user } = useAuth();
-	const { data: userOwn = [], refetch } = useQuery({
+	const { data: isDonor = [], refetch } = useQuery({
 		queryKey: ["userDonationData",user?.email],
 		queryFn: async () => {
-			const res = await axiosSecure.get(`/users-donation?email=${user.email}`);
-            console.log(res.data)
+			const res = await axiosSecure.get(`/all-users/donor/${user.email}`);
+            console.log(res.data.isDonor)
 
-			return res.data;
+			return res.data.isDonor;
            
 		},
 	});
-    return [userOwn];
+    return [isDonor];
 };
 
 export default useDonor;
