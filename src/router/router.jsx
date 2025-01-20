@@ -21,6 +21,7 @@ import ContentManagement from "../pages/Dashboard/Admin/ContentManagement";
 import AddBlog from "../pages/Dashboard/Admin/AddBlog";
 import Blog from "../pages/Blog";
 import VolunteerDashboard from "../pages/Volunteer/VolunteerDashboard";
+import VolunteerDonationRequests from "../pages/Volunteer/VolunteerDonationRequests";
 
 const router = createBrowserRouter([
 	{
@@ -120,6 +121,10 @@ const router = createBrowserRouter([
 				path: "/dashboard/volunteer-home",
 				element: <VolunteerDashboard></VolunteerDashboard>,
 			},
+			{
+				path:"/dashboard/volunteer-donation-request",
+				element:<VolunteerDonationRequests></VolunteerDonationRequests>
+			}
 		],
 	},
 ]);

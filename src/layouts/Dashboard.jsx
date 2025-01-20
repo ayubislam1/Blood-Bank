@@ -86,6 +86,17 @@ const Dashboard = () => {
                       Volunteer Home
                     </NavLink>
                     <NavLink
+                        to="/dashboard/volunteer-donation-request"
+                        end
+                        className={({ isActive }) =>
+                            `block px-4 py-3 rounded-lg text-lg font-medium transition ${
+                                isActive ? "bg-white text-red-700 shadow-md" : "hover:bg-red-700"
+                            }`
+                        }
+                    >
+                      Volunteer Donation Request
+                    </NavLink>
+                    <NavLink
                         to="/dashboard/donorHome"
                         end
                         className={({ isActive }) =>

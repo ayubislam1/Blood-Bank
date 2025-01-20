@@ -43,7 +43,7 @@ const AllDonationRequests = () => {
 	const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
 
 	return (
-		<div className="p-6 space-y-6 bg-gradient-to-b from-white to-red-50 min-h-screen">
+		<div className="p-6 space-y-6 bg-gradient-to-b pl-10  min-h-screen">
 			<h1 className="text-3xl font-bold text-red-600">All Blood Donation Requests</h1>
 
 			<div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">

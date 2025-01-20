@@ -76,7 +76,7 @@ const ContentManagement = () => {
 	};
 
 	return (
-		<div className="p-6 bg-red-50 min-h-screen">
+		<div className="p-6 pl-20 min-h-screen">
 			<div className="flex justify-between items-center mb-6">
 				<h1 className="text-3xl font-bold text-red-700">Content Management</h1>
 				<Button
