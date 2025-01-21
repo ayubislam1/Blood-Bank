@@ -49,7 +49,7 @@ const AddBlog = () => {
         content,
         status: "draft",
       };
-      console.log(newBlog);
+     
       const response = await axiosPublic.post("/blogs", newBlog);
 
       if (response.status === 200) {

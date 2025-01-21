@@ -17,7 +17,7 @@ const ViewDonationRequest = () => {
     });
   }, [id, axiosSecure]);
 
-  console.log(donationRequest)
+  
 
   if (loading) {
     return (

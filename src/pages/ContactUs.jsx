@@ -17,7 +17,7 @@ const ContactUs = () => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		Swal.fire("Your message successfully send");
-		console.log("Form submitted", formData);
+		
 	};
 
 	return (

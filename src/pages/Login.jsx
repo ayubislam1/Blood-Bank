@@ -14,11 +14,11 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 import useAuth from "../hooks/useAuth";
 import Lottie from "lottie-react";
-import logInAnimation from "../assets/login.json"
+import logInAnimation from "../assets/login.json";
 
 const Login = () => {
 	const navigate = useNavigate();
-	const { SignIn} = useAuth();
+	const { SignIn } = useAuth();
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
@@ -31,7 +31,6 @@ const Login = () => {
 
 		SignIn(email, pass)
 			.then((res) => {
-				console.log(res)
 				setLoading(false);
 				navigate("/");
 			})
@@ -95,7 +94,10 @@ const Login = () => {
 						<p className="underline flex justify-end text-sm md:text-base">
 							Forget password?
 						</p>
-						<Button type="submit" className="w-full dark:text-white bg-red-500 hover:bg-red-500">
+						<Button
+							type="submit"
+							className="w-full dark:text-white bg-red-500 hover:bg-red-500"
+						>
 							{loading ? "Loading..." : "Sign in"}
 						</Button>
 

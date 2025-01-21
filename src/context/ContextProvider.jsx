@@ -21,7 +21,7 @@ const ContextProvider = ({ children }) => {
 				const useInfo = { email: currentUser.email };
 				axiosPublic.post("/jwt", useInfo).then((res) => {
 					if (res.data.token) {
-						localStorage.setItem("access-token", res.data.token);
+						localStorage.setItem("access-token", res.data.token );
 						setLoading(false);
 					}
 				});

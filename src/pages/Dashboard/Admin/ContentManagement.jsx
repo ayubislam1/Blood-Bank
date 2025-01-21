@@ -77,7 +77,7 @@ const ContentManagement = () => {
 	};
 
 	return (
-		<div className="p-6 pl-20 min-h-screen">
+		<div className="p-6 pl-10 min-h-screen">
 			<div className="flex justify-between items-center mb-6">
 				<h1 className="text-3xl font-bold text-red-700">Content Management</h1>
 				<Button
@@ -106,21 +106,21 @@ const ContentManagement = () => {
 					{filteredBlogs?.map((blog) => (
 						<Card
 							key={blog._id}
-							className="bg-white shadow-md rounded-lg border border-red-300"
+							className="bg-white shadow-md rounded-lg border border-red-300 flex flex-col"
 						>
 							<CardHeader className="p-4 border-b border-red-200">
 								<h2 className="text-xl font-bold text-red-700">{blog.title}</h2>
 								<p className="text-gray-700">Status: {blog.status}</p>
 							</CardHeader>
 
-							<div className="p-4">
+							<div className="p-4 flex-1 flex flex-col">
 								<img
 									src={blog.thumbnail}
 									alt={blog.title}
-									className="w-full h-48 object-cover rounded-md mb-4"
+									className="w-full h-44 object-cover rounded-md mb-4"
 								/>
 								<div
-									className="overflow-y-auto h-40"
+									className="overflow-y-auto h-24"
 									style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
 									dangerouslySetInnerHTML={{
 										__html: `${blog.content}`,
@@ -128,32 +128,32 @@ const ContentManagement = () => {
 								/>
 							</div>
 
-							<CardFooter className="flex justify-between items-center p-4 border-t border-red-200">
+							<CardFooter className="flex flex-wrap justify-between items-center p-4 border-t border-red-200 gap-2">
 								<Button
 									onClick={() => handlePublish(blog._id)}
-									className="bg-green-500 text-white hover:bg-green-600"
+									className="flex-1 bg-green-500 text-white hover:bg-green-600 min-w-0"
 									disabled={blog.status === "published"}
 								>
-									<FaCheck className="mr-2" /> Publish
+									<FaCheck className="" /> Publish
 								</Button>
 								<Button
 									onClick={() => handleUnpublish(blog._id)}
-									className="bg-yellow-500 text-white hover:bg-yellow-600"
+									className="flex-1 bg-yellow-500 text-white hover:bg-yellow-600  px-1"
 									disabled={blog.status === "draft"}
 								>
-									<FaTimes className="mr-2" /> Unpublish
+									<FaTimes className="" />
+									Unpublish
 								</Button>
 								{isAdmin ? (
 									<Button
 										onClick={() => handleDelete(blog._id)}
-										className="bg-red-500 text-white hover:bg-red-600"
+										className="flex-1 bg-red-500 text-white hover:bg-red-600 min-w-0"
 									>
-										<FaTrash className="mr-2" /> Delete
+										<FaTrash className="" /> Delete
 									</Button>
 								) : (
 									<Button
-										onClick={() => handleDelete(blog._id)}
-										className="bg-red-500 text-white hover:bg-red-600"
+										className="flex-1 bg-red-500 text-white hover:bg-red-600 min-w-0"
 										disabled
 									>
 										<FaTrash className="mr-2" /> Delete

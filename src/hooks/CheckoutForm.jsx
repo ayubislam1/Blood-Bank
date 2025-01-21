@@ -29,7 +29,7 @@ const CheckoutForm = () => {
 	const handleDateChange = (e) => {
 		setDate(e.target.value);
 	};
-    console.log(typeof amount)
+   
 
 	useEffect(() => {
 		if (amount > 0) {
@@ -38,7 +38,7 @@ const CheckoutForm = () => {
 					price: amount,
 				})
 				.then((res) => {
-					console.log(res.data);
+					
 					SeTClientSecret(res.data.clientSecret);
 				});
 		}

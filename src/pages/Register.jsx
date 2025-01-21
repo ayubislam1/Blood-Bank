@@ -33,7 +33,7 @@ export default function Register() {
 	const axiosSecure = useAxiosSecure();
 	const image_host_key = import.meta.env.VITE_Image;
 	const image_host_Api = `https://api.imgbb.com/1/upload?key=${image_host_key}`;
-	console.log(image_host_Api);
+	
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -88,7 +88,7 @@ export default function Register() {
                 role:"donor",
 			};
 
-			console.log("User details with image:", newUser);
+			
 
 			
 			const userResult = await CreateUser(email, pass);

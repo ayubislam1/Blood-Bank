@@ -12,7 +12,7 @@ const useVolunteer = () => {
 
 		queryFn: async () => {
 			const res = await axiosSecure.get(`/all-users/Volunteer/${user.email}`);
-			console.log(res.data);
+			
 			return res.data.isVolunteer;
 		},
 	});

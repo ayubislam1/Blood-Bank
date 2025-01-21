@@ -11,9 +11,11 @@ import { useQuery } from "@tanstack/react-query";
 
 import { useState } from "react";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 const VolunteerDonationRequests = () => {
 	const axiosSecure = useAxiosSecure();
+	const axiosPublic = useAxiosPublic();
 	const {
 		data: donationRequests = [],
 		isLoading,
@@ -44,16 +46,14 @@ const VolunteerDonationRequests = () => {
 
 	const updateStatus = async (id, newStatus) => {
 		try {
-		
-			const response = await axiosSecure.patch(`/users-donation/${id}/status`, {
+			const response = await axiosPublic.patch(`/users-donation/${id}/status`, {
 				status: newStatus,
 			});
+			
 
 			if (!response.status === 200) {
 				throw new Error("Failed to update status");
 			}
-
-			
 			refetch();
 		} catch (error) {
 			console.error("Error updating status:", error);
