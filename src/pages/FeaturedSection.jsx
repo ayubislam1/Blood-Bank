@@ -61,7 +61,7 @@ const FeaturedSection = () => {
               key={index}
               className="transition-transform duration-300 ease-in-out"
             >
-              <div className="bg-white p-8 rounded-lg shadow-md max-w-2xl h-64 mx-auto shadow-lg scale-105 transition-transform duration-300">
+              <div className="bg-white p-8 rounded-lg  max-w-2xl h-64 mx-auto shadow-lg scale-105 transition-transform duration-300">
                 <div className="flex items-center mb-4">
                   <img
                     src={testimonial.image}
