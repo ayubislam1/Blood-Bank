@@ -47,7 +47,7 @@ const AdminDashboard = () => {
             <DollarSign className="text-green-500 h-10 w-10" />
           </div>
           <h3 className="text-xl font-semibold text-gray-700">Total Funds</h3>
-          <p className="text-3xl font-bold text-red-700">$15,450</p>
+          <p className="text-3xl font-bold text-red-700">{stats?.totalPrice}</p>
         </div>
 
      

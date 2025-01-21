@@ -25,12 +25,14 @@ import VolunteerDonationRequests from "../pages/Volunteer/VolunteerDonationReque
 import SearchPage from "../pages/SearchPage";
 import FundingPage from "../pages/FundingPage";
 import Payment from "../pages/Payment";
+import AdminRoute from "./AdminRoute";
+import ErrorPage from "../pages/ErrorPage";
 
 const router = createBrowserRouter([
 	{
 		path: "/",
 		element: <MainLayOuts></MainLayOuts>,
-		errorElement: <h1>Error</h1>,
+		errorElement: <ErrorPage></ErrorPage>,
 		children: [
 			{
 				path: "/",
@@ -66,17 +68,21 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "/funding",
-				element: <FundingPage></FundingPage>,
+				element: (
+					<PrivateRouter>
+						<FundingPage></FundingPage>
+					</PrivateRouter>
+				),
 			},
 			{
-				path:"/payment",
-				element:<Payment></Payment>
-			}
+				path: "/payment",
+				element: <Payment></Payment>,
+			},
 		],
 	},
 	{
 		path: "/dashboard",
-		element: <Dashboard></Dashboard>,
+		element: <PrivateRouter><Dashboard></Dashboard></PrivateRouter>,
 		children: [
 			{
 				path: "/dashboard/profile/:email",
@@ -91,15 +97,15 @@ const router = createBrowserRouter([
 
 			{
 				path: "/dashboard/admin",
-				element: <AdminDashboard></AdminDashboard>,
+				element: <AdminRoute><AdminDashboard></AdminDashboard></AdminRoute>,
 			},
 			{
 				path: "/dashboard/allUsers",
-				element: <AllUsersPage></AllUsersPage>,
+				element: <AdminRoute><AllUsersPage></AllUsersPage></AdminRoute>,
 			},
 			{
 				path: "/dashboard/all-donation-request",
-				element: <AllDonationRequests></AllDonationRequests>,
+				element: <AdminRoute><AllDonationRequests></AllDonationRequests></AdminRoute>,
 			},
 			{
 				path: "/dashboard/content-management",

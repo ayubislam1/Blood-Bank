@@ -13,8 +13,8 @@ import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 import useAuth from "../hooks/useAuth";
-// import Lottie from "lottie-react";
-// import logInAnimation from "../assets/login.json"
+import Lottie from "lottie-react";
+import logInAnimation from "../assets/login.json"
 
 const Login = () => {
 	const navigate = useNavigate();
@@ -46,7 +46,7 @@ const Login = () => {
 		<Card className="mx-auto max-w-2xl md:max-w-4xl lg:max-w-6xl my-5 flex flex-col-reverse md:flex-row justify-center items-center border-none gap-4 p-4">
 			<div className="w-full md:w-1/2 space-y-6">
 				<CardHeader className="space-y-2 text-center md:text-left">
-					<CardTitle className="text-2xl md:text-4xl font-bold">
+					<CardTitle className="text-2xl md:text-4xl font-bold text-red-500">
 						Sign in
 					</CardTitle>
 					<CardDescription>
@@ -95,7 +95,7 @@ const Login = () => {
 						<p className="underline flex justify-end text-sm md:text-base">
 							Forget password?
 						</p>
-						<Button type="submit" className="w-full dark:text-white">
+						<Button type="submit" className="w-full dark:text-white bg-red-500 hover:bg-red-500">
 							{loading ? "Loading..." : "Sign in"}
 						</Button>
 
@@ -110,7 +110,7 @@ const Login = () => {
 			</div>
 
 			<div className="w-full md:w-1/2 flex justify-center items-center">
-				{/* <Lottie animationData={logInAnimation}></Lottie> */}
+				<Lottie animationData={logInAnimation}></Lottie>
 			</div>
 		</Card>
 	);

@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { Link} from "react-router";
+import { Link } from "react-router";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import useAuth from "../hooks/useAuth";
 
@@ -12,6 +11,8 @@ const FundingPage = () => {
 	const axiosSecure = useAxiosSecure();
 	const { user } = useAuth();
 
+	const recordsPerPage = 7;
+
 	const fetchFunds = async () => {
 		if (!user) {
 			return;
@@ -19,10 +20,9 @@ const FundingPage = () => {
 
 		setLoading(true);
 		try {
-			const res = await axiosSecure.get(`/payments`);
-			console.log(res.data);
+			const res = await axiosSecure.get("/payments");
 			setFunds(res.data);
-			setTotalPages(res.data.totalPages);
+			setTotalPages(Math.ceil(res.data.length / recordsPerPage));
 			setLoading(false);
 		} catch (error) {
 			setLoading(false);
@@ -34,7 +34,12 @@ const FundingPage = () => {
 		if (user) {
 			fetchFunds();
 		}
-	}, [currentPage, user]);
+	}, [user]);
+
+	const currentData = funds.slice(
+		(currentPage - 1) * recordsPerPage,
+		currentPage * recordsPerPage
+	);
 
 	return (
 		<div className="p-6">
@@ -55,7 +60,7 @@ const FundingPage = () => {
 			{loading ? (
 				<p>Loading...</p>
 			) : (
-				<table className="min-w-full border-collapse border border-gray-300 mb-4">
+				<table className="min-w-full border-collapse border border-gray-300 mb-4 text-center">
 					<thead>
 						<tr>
 							<th className="border border-gray-300 px-4 py-2">Name</th>
@@ -64,7 +69,7 @@ const FundingPage = () => {
 						</tr>
 					</thead>
 					<tbody>
-						{funds?.map((fund, index) => (
+						{currentData.map((fund, index) => (
 							<tr key={index}>
 								<td className="border border-gray-300 px-4 py-2">
 									{fund.name}
@@ -85,7 +90,7 @@ const FundingPage = () => {
 				<button
 					disabled={currentPage === 1}
 					className={`py-2 px-4 rounded-lg ${
-						currentPage === 1 ? "bg-gray-400" : "bg-blue-600 text-white"
+						currentPage === 1 ? "bg-gray-400" : "bg-red-600 text-white"
 					}`}
 					onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
 				>
@@ -99,7 +104,7 @@ const FundingPage = () => {
 					className={`py-2 px-4 rounded-lg ${
 						currentPage === totalPages
 							? "bg-gray-400"
-							: "bg-blue-600 text-white"
+							: "bg-red-600 text-white"
 					}`}
 					onClick={() =>
 						setCurrentPage((prev) => Math.min(prev + 1, totalPages))

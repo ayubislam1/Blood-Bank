@@ -15,7 +15,7 @@ const BloodDonationRequests = () => {
 		const fetchRequests = async () => {
 			try {
 				const response = await axiosSecure.get(
-					"/users-donation?status=pending"
+					"/users-donation"
 				);
 				setRequests(response.data);
 			} catch (error) {

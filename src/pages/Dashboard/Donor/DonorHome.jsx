@@ -62,7 +62,7 @@ const DonorHome = () => {
 	return (
 		<div className="p-6  mx-auto mt-10 md:mt-10">
 			<div className="bg-red-100 text-red-700 rounded-lg p-4 mb-6 shadow-md">
-				<h1 className="text-3xl font-bold">Welcome, Donor!</h1>
+				<h1 className="text-3xl font-bold">Welcome, Donor {user.displayName}</h1>
 				<p className="mt-2 text-lg">
 					Thank you for being a part of this lifesaving mission. Your recent
 					donation requests are listed below.

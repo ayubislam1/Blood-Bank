@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
-// import Lottie from "lottie-react";
-// import registerAnimation from "../assets/Register.json"
+import Lottie from "lottie-react";
+import registerAnimation from "../assets/Register.json"
 import {
 	Card,
 	CardHeader,
@@ -50,6 +50,7 @@ export default function Register() {
 
 		setErrormessage("");
 
+		
 		if (pass !== confirmPass) {
 			setErrormessage("Passwords do not match.");
 			return;
@@ -65,6 +66,7 @@ export default function Register() {
 		}
 
 		try {
+		
 			const formData = new FormData();
 			formData.append("image", photoUrl[0]);
 
@@ -83,17 +85,19 @@ export default function Register() {
 				district,
 				upazila,
 				status: "active",
-				role: "donor",
+                role:"donor",
 			};
 
 			console.log("User details with image:", newUser);
 
+			
 			const userResult = await CreateUser(email, pass);
 			console.log("Firebase user created:", userResult.user);
 
 			await updateName(name, imageUrl);
 			console.log("User profile updated successfully.");
 
+		
 			const response = await axiosSecure.post("/all-users", newUser);
 
 			if (response.data.insertedId) {
@@ -105,13 +109,18 @@ export default function Register() {
 					timer: 1500,
 				});
 
+			
 				navigate("/");
 				form.reset();
 			} else {
-				console.log("Failed to save user to the database. Please try again.");
+				console.log(
+					"Failed to save user to the database. Please try again."
+				);
 			}
 		} catch (error) {
+			
 			console.error("An error occurred:", error.response || error.message);
+
 		}
 	};
 
@@ -119,7 +128,7 @@ export default function Register() {
 		<Card className="max-w-7xl mx-auto my-5 flex flex-col lg:flex-row items-center border-none shadow-md">
 			<div className="flex-1 p-5">
 				<CardHeader>
-					<CardTitle className="text-2xl md:text-3xl lg:text-4xl font-bold">
+					<CardTitle className="text-2xl md:text-3xl lg:text-4xl font-bold text-red-500">
 						Create an account
 					</CardTitle>
 					<CardDescription className="text-sm md:text-base">
@@ -464,7 +473,7 @@ export default function Register() {
 								<span className="underline">Terms & Conditions</span>
 							</p>
 						</div>
-						<Button className="w-full dark:text-white">
+						<Button className="w-full dark:text-white bg-red-500 hover:bg-red-500">
 							{loading ? "Loading.." : "Sign up"}
 						</Button>
 
@@ -479,7 +488,7 @@ export default function Register() {
 				</CardContent>
 			</div>
 			<div className="max-w-full w-full md:w-1/2 object-contain p-5 ">
-				{/* <Lottie animationData={registerAnimation}></Lottie> */}
+				<Lottie animationData={registerAnimation}></Lottie>
 			</div>
 		</Card>
 	);

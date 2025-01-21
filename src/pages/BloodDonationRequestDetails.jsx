@@ -34,18 +34,48 @@ const BloodDonationRequestDetails = () => {
     Swal.fire({
       title: "Confirm Donation",
       html: `
-        <p>Donor Name: <strong>${user.displayName}</strong></p>
-        <p>Donor Email: <strong>${user.email}</strong></p>
+        <form id="donationForm">
+          <div class="mb-4">
+            <label for="donorName" class="block text-sm font-medium text-gray-700">Donor Name</label>
+            <input
+              type="text"
+              id="donorName"
+              value="${user.displayName}"
+              class="mt-1 block w-full p-2 border rounded-md bg-gray-100"
+              readOnly
+            />
+          </div>
+          <div class="mb-4">
+            <label for="donorEmail" class="block text-sm font-medium text-gray-700">Donor Email</label>
+            <input
+              type="email"
+              id="donorEmail"
+              value="${user.email}"
+              class="mt-1 block w-full p-2 border rounded-md bg-gray-100"
+              readOnly
+            />
+          </div>
+        </form>
       `,
       icon: "info",
       showCancelButton: true,
       confirmButtonText: "Confirm",
       cancelButtonText: "Cancel",
       confirmButtonColor: "#ff4d4d",
+      preConfirm: () => {
+        const form = document.getElementById("donationForm");
+        const donorName = form.donorName.value;
+        const donorEmail = form.donorEmail.value;
+        return { donorName, donorEmail };
+      },
     }).then(async (result) => {
       if (result.isConfirmed) {
+        const { donorName, donorEmail } = result.value;
         try {
-          await axiosSecure.patch(`/users-donation/${id}`,{name:user.displayName,email:user.email});
+          await axiosSecure.patch(`/users-donation/${id}`, {
+            name: donorName,
+            email: donorEmail,
+          });
           Swal.fire("Success", "Donation confirmed.", "success");
           navigate("/donation-requests");
         } catch (error) {

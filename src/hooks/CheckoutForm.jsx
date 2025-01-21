@@ -14,6 +14,7 @@ const CheckoutForm = () => {
 	const [date, setDate] = useState(""); 
 	const { user } = useAuth();
 	const navigate = useNavigate();
+    
 
 	const handleAmountChange = (e) => {
 		const value = e.target.value;
@@ -28,6 +29,7 @@ const CheckoutForm = () => {
 	const handleDateChange = (e) => {
 		setDate(e.target.value);
 	};
+    console.log(typeof amount)
 
 	useEffect(() => {
 		if (amount > 0) {
