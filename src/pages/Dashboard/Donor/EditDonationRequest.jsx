@@ -3,12 +3,16 @@ import { useNavigate, useParams } from "react-router";
 import { Button } from "../../../components/ui/button";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import useAuth from "../../../hooks/useAuth"; // Assuming you have a custom hook for authentication
+import useAdmin from "../../../hooks/useAdmin";
 
 const EditDonationRequest = () => {
 	const { id } = useParams();
 	const [donationRequest, setDonationRequest] = useState({});
 	const [loading, setLoading] = useState(true);
+	const { user } = useAuth();
 	const axiosSecure = useAxiosSecure();
+	const [isAdmin] = useAdmin();
 
 	useEffect(() => {
 		axiosSecure.get(`/users-donation/${id}`).then((res) => {
@@ -126,19 +130,22 @@ const EditDonationRequest = () => {
 						className="w-full px-4 py-2 border rounded-md"
 					/>
 				</div>
-				<div className="mb-4">
-					<label className="block text-red-700 font-semibold">Status</label>
-					<select
-						name="status"
-						value={donationRequest.status}
-						onChange={handleChange}
-						className="w-full px-4 py-2 border rounded-md"
-					>
-						<option value="inprogress">In Progress</option>
-						<option value="done">Done</option>
-						<option value="canceled">Canceled</option>
-					</select>
-				</div>
+
+				{isAdmin && (
+					<div className="mb-4">
+						<label className="block text-red-700 font-semibold">Status</label>
+						<select
+							name="status"
+							value={donationRequest.status}
+							onChange={handleChange}
+							className="w-full px-4 py-2 border rounded-md"
+						>
+							<option value="inprogress">In Progress</option>
+							<option value="done">Done</option>
+							<option value="canceled">Canceled</option>
+						</select>
+					</div>
+				)}
 				<Button
 					onClick={handleUpdate}
 					className="bg-red-600 hover:bg-red-700 text-white w-full py-2 rounded-md"
