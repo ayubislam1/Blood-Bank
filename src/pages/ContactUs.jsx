@@ -21,7 +21,7 @@ const ContactUs = () => {
 	};
 
 	return (
-		<div className="py-16 bg-white text-center md:flex justify-center items-center">
+		<div className="py-5 bg-white text-center md:flex justify-center items-center">
 			<div className="ml-10 flex-1 max-w-xl ">
 				<Lottie className="max-w-4xl" animationData={blood2}></Lottie>
 			</div>
