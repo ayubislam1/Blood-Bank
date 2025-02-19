@@ -123,7 +123,7 @@ const Navbar = () => {
 			<motion.div  className="ml-auto hidden lg:flex gap-6">
 				<Link
 					to="/"
-					className={`group inline-flex h-9 px-4 texy py-2 rounded-md text-sm font-medium text-red-500 hover:bg-red-500 hover:text-white transition-colors ${
+					className={`group inline-flex h-9 px-4  py-2 rounded-md text-sm font-medium text-red-500 hover:bg-red-500 hover:text-white transition-colors ${
 						isActive("/") ? "bg-red-500 text-white" : ""
 					}`}
 				>

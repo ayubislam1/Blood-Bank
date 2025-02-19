@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 import { Card, CardHeader } from "@/components/ui/card";
+import Loading from "../components/ui/Loading";
 
 const Blog = () => {
 	const axiosPublic = useAxiosPublic();
@@ -29,7 +30,12 @@ const Blog = () => {
 				</h1>
 
 				{isLoading ? (
-					<div className="text-red-700 mt-6">Loading blogs...</div>
+					<div className="flex h-screen w-full items-center justify-center">
+					<div className="flex flex-col items-center space-y-4">
+					  <div className="h-8 w-8 animate-spin text-gray-500 dark:text-gray-400" />
+					  <p className="text-gray-500 dark:text-gray-400"><Loading></Loading></p>
+					</div>
+				  </div>
 				) : (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
 						{filterBlogs?.map((blog) => (
