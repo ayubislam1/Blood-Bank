@@ -1,444 +1,446 @@
-import {
-	Select,
-	SelectItem,
-	SelectTrigger,
-	SelectContent,
-	SelectValue,
-} from "@/components/ui/select";
-import { Input } from "../../../components/ui/input";
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { Button } from "../../../components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
-import useAuth from "../../../hooks/useAuth";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import Swal from "sweetalert2";
+import useAuth from "../../../hooks/useAuth";
+import { motion } from "framer-motion";
+import {
+	FaCalendarAlt,
+	FaClock,
+	FaMapMarkerAlt,
+	FaTint,
+	FaUserInjured,
+	FaHospital,
+	FaNotesMedical,
+	FaCheckCircle,
+	FaInfoCircle,
+	FaPaperPlane,
+} from "react-icons/fa";
 
 const CreateDonationRequest = () => {
-	const { user, loading } = useAuth();
+	const { user } = useAuth();
 	const axiosPublic = useAxiosPublic();
+	const {
+		register,
+		handleSubmit,
+		reset,
+		watch,
+		formState: { errors, isSubmitting },
+	} = useForm();
+	const [districts, setDistricts] = useState([]);
+	const [upazilas, setUpazilas] = useState([]);
+	const [filteredUpazilas, setFilteredUpazilas] = useState([]);
+	const selectedDistrict = watch("district");
 
-	const [formData, setFormData] = useState({
-		name: user?.displayName || "",
-		email: user?.email || "",
-		recipientName: "",
-		district: "",
-		upazila: "",
-		hospitalName: "",
-		fullAddress: "",
-		bloodGroup: "",
-		donationDate: "",
-		donationTime: "",
-		requestMessage: "",
-		status: "pending",
-	});
+	useEffect(() => {
+		const fetchLocations = async () => {
+			try {
+				const districtsResponse = await axiosPublic.get("/districts");
+				setDistricts(districtsResponse.data);
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		axiosPublic.post("/users-donation", formData).then((res) => {
-			Swal.fire("Donation request submitted successfully!");
-			setFormData({
-				...formData,
-				recipientName: "",
-				hospitalName: "",
-				fullAddress: "",
+				const upazilasResponse = await axiosPublic.get("/upazilas");
+				setUpazilas(upazilasResponse.data);
+			} catch (error) {
+				console.error("Error fetching locations:", error);
+			}
+		};
+
+		fetchLocations();
+	}, [axiosPublic]);
+
+	useEffect(() => {
+		if (selectedDistrict) {
+			const filtered = upazilas.filter(
+				(upazila) => upazila.district_id === selectedDistrict
+			);
+			setFilteredUpazilas(filtered);
+		} else {
+			setFilteredUpazilas([]);
+		}
+	}, [selectedDistrict, upazilas]);
+
+	const onSubmit = async (data) => {
+		try {
+			const donationRequestData = {
+				...data,
+				requesterName: user?.displayName,
+				requesterEmail: user?.email,
+				status: "inprogress",
+				donorEmail: "", // Will be filled when a donor accepts
+				creationDate: new Date().toISOString(),
+			};
+
+			const response = await axiosPublic.post(
+				"/users-donation",
+				donationRequestData
+			);
+
+			if (response.data.insertedId) {
+				reset();
+				Swal.fire({
+					position: "top-end",
+					icon: "success",
+					title: "Donation request created successfully!",
+					showConfirmButton: false,
+					timer: 1500,
+				});
+			}
+		} catch (error) {
+			console.error("Error creating donation request:", error);
+			Swal.fire({
+				position: "top-end",
+				icon: "error",
+				title: "Failed to create donation request.",
+				showConfirmButton: false,
+				timer: 1500,
 			});
-		});
+		}
 	};
 
-	if (loading) return <div>Loading...</div>;
+	const fadeInUp = {
+		hidden: { opacity: 0, y: 20 },
+		visible: { opacity: 1, y: 0 },
+	};
 
 	return (
-		<div className="p-6 max-w-lg mx-auto bg-white shadow-md rounded-md">
-			<h1 className="text-2xl font-bold mb-6 text-center">
-				Create Donation Request
-			</h1>
-			<form onSubmit={handleSubmit} className="space-y-4">
-				<Input
-					label="Requester Name"
-					value={formData.name}
-					readOnly
-					className="bg-gray-100"
-				/>
-				<Input
-					label="Requester Email"
-					value={formData.email}
-					readOnly
-					className="bg-gray-100"
-				/>
+		<motion.div
+			initial="hidden"
+			animate="visible"
+			variants={fadeInUp}
+			transition={{ duration: 0.5 }}
+			className="max-w-4xl mx-auto px-4 py-8"
+		>
+			<div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+				{/* Header */}
+				<div className="bg-gradient-to-r from-red-600 to-red-700 px-6 py-6 text-white">
+					<h2 className="text-2xl font-bold flex items-center">
+						<FaTint className="mr-3 text-3xl" />
+						Create Blood Donation Request
+					</h2>
+					<p className="mt-1 opacity-90">
+						Please fill out the form below to create a new blood donation
+						request
+					</p>
+				</div>
 
-				<Input
-					label="Recipient Name"
-					placeholder="Enter recipient's name"
-					value={formData.recipientName}
-					onChange={(e) =>
-						setFormData({ ...formData, recipientName: e.target.value })
-					}
-					required
-				/>
+				{/* Form */}
+				<form onSubmit={handleSubmit(onSubmit)} className="p-6">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+						{/* Recipient Name */}
+						<motion.div
+							variants={fadeInUp}
+							transition={{ delay: 0.1 }}
+							className="space-y-2"
+						>
+							<label className="block text-sm font-medium text-gray-700 flex items-center">
+								<FaUserInjured className="mr-2 text-red-500" />
+								Recipient Name
+							</label>
+							<div className="relative">
+								<input
+									type="text"
+									{...register("recipientName", { required: true })}
+									placeholder="Enter recipient's name"
+									className={`w-full px-4 py-3 rounded-lg border ${
+										errors.recipientName ? "border-red-500" : "border-gray-300"
+									} focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent`}
+								/>
+								{errors.recipientName && (
+									<p className="mt-1 text-xs text-red-500">
+										Recipient name is required
+									</p>
+								)}
+							</div>
+						</motion.div>
 
-				<Select
-					onValueChange={(value) =>
-						setFormData({ ...formData, district: value })
-					}
-					required
-				>
-					<SelectTrigger className="w-full">
-						<SelectValue placeholder="Select District" />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="Bagerhat">Bagerhat</SelectItem>
-						<SelectItem value="Bandarban">Bandarban</SelectItem>
-						<SelectItem value="Barguna">Barguna</SelectItem>
-						<SelectItem value="Barishal">Barishal</SelectItem>
-						<SelectItem value="Bhola">Bhola</SelectItem>
-						<SelectItem value="Bogra">Bogra</SelectItem>
-						<SelectItem value="Brahmanbaria">Brahmanbaria</SelectItem>
-						<SelectItem value="Chandpur">Chandpur</SelectItem>
-						<SelectItem value="Chattogram">Chattogram</SelectItem>
-						<SelectItem value="Chuadanga">Chuadanga</SelectItem>
-						<SelectItem value="Cox's Bazar">Cox's Bazar</SelectItem>
-						<SelectItem value="Cumilla">Cumilla</SelectItem>
-						<SelectItem value="Dinajpur">Dinajpur</SelectItem>
-						<SelectItem value="Faridpur">Faridpur</SelectItem>
-						<SelectItem value="Feni">Feni</SelectItem>
-						<SelectItem value="Gaibandha">Gaibandha</SelectItem>
-						<SelectItem value="Gazipur">Gazipur</SelectItem>
-						<SelectItem value="Gopalganj">Gopalganj</SelectItem>
-						<SelectItem value="Habiganj">Habiganj</SelectItem>
-						<SelectItem value="Jamalpur">Jamalpur</SelectItem>
-						<SelectItem value="Jashore">Jashore</SelectItem>
-						<SelectItem value="Jhalokati">Jhalokati</SelectItem>
-						<SelectItem value="Jhenaidah">Jhenaidah</SelectItem>
-						<SelectItem value="Joypurhat">Joypurhat</SelectItem>
-						<SelectItem value="Khagrachari">Khagrachari</SelectItem>
-						<SelectItem value="Khulna">Khulna</SelectItem>
-						<SelectItem value="Kishoreganj">Kishoreganj</SelectItem>
-						<SelectItem value="Kurigram">Kurigram</SelectItem>
-						<SelectItem value="Kushtia">Kushtia</SelectItem>
-						<SelectItem value="Lakshmipur">Lakshmipur</SelectItem>
-						<SelectItem value="Lalmonirhat">Lalmonirhat</SelectItem>
-						<SelectItem value="Madaripur">Madaripur</SelectItem>
-						<SelectItem value="Magura">Magura</SelectItem>
-						<SelectItem value="Manikganj">Manikganj</SelectItem>
-						<SelectItem value="Meherpur">Meherpur</SelectItem>
-						<SelectItem value="Moulvibazar">Moulvibazar</SelectItem>
-						<SelectItem value="Munshiganj">Munshiganj</SelectItem>
-						<SelectItem value="Mymensingh">Mymensingh</SelectItem>
-						<SelectItem value="Naogaon">Naogaon</SelectItem>
-						<SelectItem value="Narail">Narail</SelectItem>
-						<SelectItem value="Narayanganj">Narayanganj</SelectItem>
-						<SelectItem value="Narsingdi">Narsingdi</SelectItem>
-						<SelectItem value="Natore">Natore</SelectItem>
-						<SelectItem value="Netrokona">Netrokona</SelectItem>
-						<SelectItem value="Nilphamari">Nilphamari</SelectItem>
-						<SelectItem value="Noakhali">Noakhali</SelectItem>
-						<SelectItem value="Pabna">Pabna</SelectItem>
-						<SelectItem value="Panchagarh">Panchagarh</SelectItem>
-						<SelectItem value="Patuakhali">Patuakhali</SelectItem>
-						<SelectItem value="Pirojpur">Pirojpur</SelectItem>
-						<SelectItem value="Rajbari">Rajbari</SelectItem>
-						<SelectItem value="Rajshahi">Rajshahi</SelectItem>
-						<SelectItem value="Rangamati">Rangamati</SelectItem>
-						<SelectItem value="Rangpur">Rangpur</SelectItem>
-						<SelectItem value="Satkhira">Satkhira</SelectItem>
-						<SelectItem value="Shariatpur">Shariatpur</SelectItem>
-						<SelectItem value="Sherpur">Sherpur</SelectItem>
-						<SelectItem value="Sirajganj">Sirajganj</SelectItem>
-						<SelectItem value="Sunamganj">Sunamganj</SelectItem>
-						<SelectItem value="Sylhet">Sylhet</SelectItem>
-						<SelectItem value="Tangail">Tangail</SelectItem>
-						<SelectItem value="Thakurgaon">Thakurgaon</SelectItem>
-					</SelectContent>
-				</Select>
+						{/* Blood Group */}
+						<motion.div
+							variants={fadeInUp}
+							transition={{ delay: 0.15 }}
+							className="space-y-2"
+						>
+							<label className="block text-sm font-medium text-gray-700 flex items-center">
+								<FaTint className="mr-2 text-red-500" />
+								Blood Group
+							</label>
+							<div className="relative">
+								<select
+									{...register("bloodGroup", { required: true })}
+									className={`w-full px-4 py-3 rounded-lg border ${
+										errors.bloodGroup ? "border-red-500" : "border-gray-300"
+									} focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent`}
+								>
+									<option value="">Select blood group</option>
+									<option value="A+">A+</option>
+									<option value="A-">A-</option>
+									<option value="B+">B+</option>
+									<option value="B-">B-</option>
+									<option value="AB+">AB+</option>
+									<option value="AB-">AB-</option>
+									<option value="O+">O+</option>
+									<option value="O-">O-</option>
+								</select>
+								{errors.bloodGroup && (
+									<p className="mt-1 text-xs text-red-500">
+										Blood group is required
+									</p>
+								)}
+							</div>
+						</motion.div>
 
-				<Select
-					onValueChange={(value) =>
-						setFormData({ ...formData, upazila: value })
-					}
-					required
-				>
-					<SelectTrigger className="w-full">
-						<SelectValue placeholder="Select Upazila" />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="Ajmiriganj">Ajmiriganj</SelectItem>
-						<SelectItem value="Akhaura">Akhaura</SelectItem>
-						<SelectItem value="Alamdanga">Alamdanga</SelectItem>
-						<SelectItem value="Akkelpur">Akkelpur</SelectItem>
-						<SelectItem value="Amtali">Amtali</SelectItem>
-						<SelectItem value="Anwara">Anwara</SelectItem>
-						<SelectItem value="Araihazar">Araihazar</SelectItem>
-						<SelectItem value="Atghoria">Atghoria</SelectItem>
-						<SelectItem value="Atpara">Atpara</SelectItem>
-						<SelectItem value="Austagram">Austagram</SelectItem>
-						<SelectItem value="Bakalia">Bakalia</SelectItem>
-						<SelectItem value="Babuganj">Babuganj</SelectItem>
-						<SelectItem value="Badalgachhi">Badalgachhi</SelectItem>
-						<SelectItem value="Bagerhat Sadar">Bagerhat Sadar</SelectItem>
-						<SelectItem value="Bahubal">Bahubal</SelectItem>
-						<SelectItem value="Bajitpur">Bajitpur</SelectItem>
-						<SelectItem value="Bakerganj">Bakerganj</SelectItem>
-						<SelectItem value="Banaripara">Banaripara</SelectItem>
-						<SelectItem value="Bandarban Sadar">Bandarban Sadar</SelectItem>
-						<SelectItem value="Bandar">Bandar</SelectItem>
-						<SelectItem value="Baniachong">Baniachong</SelectItem>
-						<SelectItem value="Banichal">Banichal</SelectItem>
-						<SelectItem value="Banshkhali">Banshkhali</SelectItem>
-						<SelectItem value="Baralekha">Baralekha</SelectItem>
-						<SelectItem value="Barhatta">Barhatta</SelectItem>
-						<SelectItem value="Barihat">Barihat</SelectItem>
-						<SelectItem value="Bariyarhat">Bariyarhat</SelectItem>
-						<SelectItem value="Bauphal">Bauphal</SelectItem>
-						<SelectItem value="Bheramara">Bheramara</SelectItem>
-						<SelectItem value="Bhola Sadar">Bhola Sadar</SelectItem>
-						<SelectItem value="Bhuapur">Bhuapur</SelectItem>
-						<SelectItem value="Birampur">Birampur</SelectItem>
-						<SelectItem value="Birganj">Birganj</SelectItem>
-						<SelectItem value="Birgonj">Birgonj</SelectItem>
-						<SelectItem value="Birishiri">Birishiri</SelectItem>
-						<SelectItem value="Biswanath">Biswanath</SelectItem>
-						<SelectItem value="Boalkhali">Boalkhali</SelectItem>
-						<SelectItem value="Bochaganj">Bochaganj</SelectItem>
-						<SelectItem value="Boishampur">Boishampur</SelectItem>
-						<SelectItem value="Chakaria">Chakaria</SelectItem>
-						<SelectItem value="Chandanaish">Chandanaish</SelectItem>
-						<SelectItem value="Chandpur Sadar">Chandpur Sadar</SelectItem>
-						<SelectItem value="Chapainawabganj Sadar">
-							Chapainawabganj Sadar
-						</SelectItem>
-						<SelectItem value="Charbhadrasan">Charbhadrasan</SelectItem>
-						<SelectItem value="Chatmohar">Chatmohar</SelectItem>
-						<SelectItem value="Chaugachha">Chaugachha</SelectItem>
-						<SelectItem value="Chhagalnaiya">Chhagalnaiya</SelectItem>
-						<SelectItem value="Chirirbandar">Chirirbandar</SelectItem>
-						<SelectItem value="Chitalmari">Chitalmari</SelectItem>
-						<SelectItem value="Chunarughat">Chunarughat</SelectItem>
-						<SelectItem value="Comilla Sadar">Comilla Sadar</SelectItem>
-						<SelectItem value="Daganbhuiyan">Daganbhuiyan</SelectItem>
-						<SelectItem value="Damudya">Damudya</SelectItem>
-						<SelectItem value="Damurhuda">Damurhuda</SelectItem>
-						<SelectItem value="Daudkandi">Daudkandi</SelectItem>
-						<SelectItem value="Debidwar">Debidwar</SelectItem>
-						<SelectItem value="Debiganj">Debiganj</SelectItem>
-						<SelectItem value="Delduar">Delduar</SelectItem>
-						<SelectItem value="Derai">Derai</SelectItem>
-						<SelectItem value="Dhamoirhat">Dhamoirhat</SelectItem>
-						<SelectItem value="Dhamrai">Dhamrai</SelectItem>
-						<SelectItem value="Dhanbari">Dhanbari</SelectItem>
-						<SelectItem value="Dohar">Dohar</SelectItem>
-						<SelectItem value="Domar">Domar</SelectItem>
-						<SelectItem value="Dowarabazar">Dowarabazar</SelectItem>
-						<SelectItem value="Dupchanchia">Dupchanchia</SelectItem>
-						<SelectItem value="Fatikchhari">Fatikchhari</SelectItem>
-						<SelectItem value="Fenchuganj">Fenchuganj</SelectItem>
-						<SelectItem value="Gafargaon">Gafargaon</SelectItem>
-						<SelectItem value="Gajaria">Gajaria</SelectItem>
-						<SelectItem value="Gangni">Gangni</SelectItem>
-						<SelectItem value="Gauripur">Gauripur</SelectItem>
-						<SelectItem value="Gazipur Sadar">Gazipur Sadar</SelectItem>
-						<SelectItem value="Gopalganj Sadar">Gopalganj Sadar</SelectItem>
-						<SelectItem value="Gosairhat">Gosairhat</SelectItem>
-						<SelectItem value="Gowainghat">Gowainghat</SelectItem>
-						<SelectItem value="Gurudaspur">Gurudaspur</SelectItem>
-						<SelectItem value="Habiganj Sadar">Habiganj Sadar</SelectItem>
-						<SelectItem value="Haimchar">Haimchar</SelectItem>
-						<SelectItem value="Haluaghat">Haluaghat</SelectItem>
-						<SelectItem value="Harinakunda">Harinakunda</SelectItem>
-						<SelectItem value="Harirampur">Harirampur</SelectItem>
-						<SelectItem value="Hatibandha">Hatibandha</SelectItem>
-						<SelectItem value="Hathazari">Hathazari</SelectItem>
-						<SelectItem value="Homna">Homna</SelectItem>
-						<SelectItem value="Ishwardi">Ishwardi</SelectItem>
-						<SelectItem value="Itna">Itna</SelectItem>
-						<SelectItem value="Jaintiapur">Jaintiapur</SelectItem>
-						<SelectItem value="Jaldhaka">Jaldhaka</SelectItem>
-						<SelectItem value="Jamalganj">Jamalganj</SelectItem>
-						<SelectItem value="Jamalpur Sadar">Jamalpur Sadar</SelectItem>
-						<SelectItem value="Jessore Sadar">Jessore Sadar</SelectItem>
-						<SelectItem value="Jhenaidah Sadar">Jhenaidah Sadar</SelectItem>
-						<SelectItem value="Kalapara">Kalapara</SelectItem>
-						<SelectItem value="Kaliganj">Kaliganj</SelectItem>
-						<SelectItem value="Kalkini">Kalkini</SelectItem>
-						<SelectItem value="Kamalganj">Kamalganj</SelectItem>
-						<SelectItem value="Kamalnagar">Kamalnagar</SelectItem>
-						<SelectItem value="Kapasia">Kapasia</SelectItem>
-						<SelectItem value="Kashiani">Kashiani</SelectItem>
-						<SelectItem value="Katiadi">Katiadi</SelectItem>
-						<SelectItem value="Kawkhali">Kawkhali</SelectItem>
-						<SelectItem value="Kazipur">Kazipur</SelectItem>
-						<SelectItem value="Kendua">Kendua</SelectItem>
-						<SelectItem value="Keraniganj">Keraniganj</SelectItem>
-						<SelectItem value="Khansama">Khansama</SelectItem>
-						<SelectItem value="Kishoreganj Sadar">Kishoreganj Sadar</SelectItem>
-						<SelectItem value="Kulaura">Kulaura</SelectItem>
-						<SelectItem value="Kuliarchar">Kuliarchar</SelectItem>
-						<SelectItem value="Kushtia Sadar">Kushtia Sadar</SelectItem>
-						<SelectItem value="Lalbagh">Lalbagh</SelectItem>
-						<SelectItem value="Lalmai">Lalmai</SelectItem>
-						<SelectItem value="Lalmohan">Lalmohan</SelectItem>
-						<SelectItem value="Lalmonirhat Sadar">Lalmonirhat Sadar</SelectItem>
-						<SelectItem value="Madaripur Sadar">Madaripur Sadar</SelectItem>
-						<SelectItem value="Madhabpur">Madhabpur</SelectItem>
-						<SelectItem value="Madhupur">Madhupur</SelectItem>
-						<SelectItem value="Magura Sadar">Magura Sadar</SelectItem>
-						<SelectItem value="Manikganj Sadar">Manikganj Sadar</SelectItem>
-						<SelectItem value="Mathbaria">Mathbaria</SelectItem>
-						<SelectItem value="Matiranga">Matiranga</SelectItem>
-						<SelectItem value="Mithapukur">Mithapukur</SelectItem>
-						<SelectItem value="Mirsarai">Mirsarai</SelectItem>
-						<SelectItem value="Mirzapur">Mirzapur</SelectItem>
-						<SelectItem value="Mohadevpur">Mohadevpur</SelectItem>
-						<SelectItem value="Mohanganj">Mohanganj</SelectItem>
-						<SelectItem value="Moulvibazar Sadar">Moulvibazar Sadar</SelectItem>
-						<SelectItem value="Muktagachha">Muktagachha</SelectItem>
-						<SelectItem value="Muladi">Muladi</SelectItem>
-						<SelectItem value="Munshiganj Sadar">Munshiganj Sadar</SelectItem>
-						<SelectItem value="Mymensingh Sadar">Mymensingh Sadar</SelectItem>
-						<SelectItem value="Nageshwari">Nageshwari</SelectItem>
-						<SelectItem value="Naogaon Sadar">Naogaon Sadar</SelectItem>
-						<SelectItem value="Narayanganj Sadar">Narayanganj Sadar</SelectItem>
-						<SelectItem value="Narsingdi Sadar">Narsingdi Sadar</SelectItem>
-						<SelectItem value="Natore Sadar">Natore Sadar</SelectItem>
-						<SelectItem value="Netrokona Sadar">Netrokona Sadar</SelectItem>
-						<SelectItem value="Nilphamari Sadar">Nilphamari Sadar</SelectItem>
-						<SelectItem value="Noakhali Sadar">Noakhali Sadar</SelectItem>
-						<SelectItem value="Nobiganj">Nobiganj</SelectItem>
-						<SelectItem value="Pabna Sadar">Pabna Sadar</SelectItem>
-						<SelectItem value="Paltan">Paltan</SelectItem>
-						<SelectItem value="Palash">Palash</SelectItem>
-						<SelectItem value="Palashbari">Palashbari</SelectItem>
-						<SelectItem value="Panchagarh Sadar">Panchagarh Sadar</SelectItem>
-						<SelectItem value="Patiya">Patiya</SelectItem>
-						<SelectItem value="Patnitala">Patnitala</SelectItem>
-						<SelectItem value="Patuakhali Sadar">Patuakhali Sadar</SelectItem>
-						<SelectItem value="Phulbari">Phulbari</SelectItem>
-						<SelectItem value="Phultala">Phultala</SelectItem>
-						<SelectItem value="Pirganj">Pirganj</SelectItem>
-						<SelectItem value="Pirgachha">Pirgachha</SelectItem>
-						<SelectItem value="Pirojpur Sadar">Pirojpur Sadar</SelectItem>
-						<SelectItem value="Rajapur">Rajapur</SelectItem>
-						<SelectItem value="Rajbari Sadar">Rajbari Sadar</SelectItem>
-						<SelectItem value="Rajshahi Sadar">Rajshahi Sadar</SelectItem>
-						<SelectItem value="Rangamati Sadar">Rangamati Sadar</SelectItem>
-						<SelectItem value="Rangpur Sadar">Rangpur Sadar</SelectItem>
-						<SelectItem value="Raipura">Raipura</SelectItem>
-						<SelectItem value="Ramganj">Ramganj</SelectItem>
-						<SelectItem value="Ramu">Ramu</SelectItem>
-						<SelectItem value="Rangunia">Rangunia</SelectItem>
-						<SelectItem value="Rowangchhari">Rowangchhari</SelectItem>
-						<SelectItem value="Ruma">Ruma</SelectItem>
-						<SelectItem value="Rupganj">Rupganj</SelectItem>
-						<SelectItem value="Sadullapur">Sadullapur</SelectItem>
-						<SelectItem value="Saghata">Saghata</SelectItem>
-						<SelectItem value="Saidpur">Saidpur</SelectItem>
-						<SelectItem value="Sakhipur">Sakhipur</SelectItem>
-						<SelectItem value="Sandwip">Sandwip</SelectItem>
-						<SelectItem value="Santhia">Santhia</SelectItem>
-						<SelectItem value="Sarail">Sarail</SelectItem>
-						<SelectItem value="Satkhira Sadar">Satkhira Sadar</SelectItem>
-						<SelectItem value="Shahjadpur">Shahjadpur</SelectItem>
-						<SelectItem value="Sharsha">Sharsha</SelectItem>
-						<SelectItem value="Sheikhpara">Sheikhpara</SelectItem>
-						<SelectItem value="Sherpur Sadar">Sherpur Sadar</SelectItem>
-						<SelectItem value="Shibchar">Shibchar</SelectItem>
-						<SelectItem value="Shibganj">Shibganj</SelectItem>
-						<SelectItem value="Shyamnagar">Shyamnagar</SelectItem>
-						<SelectItem value="Singair">Singair</SelectItem>
-						<SelectItem value="Sirajganj Sadar">Sirajganj Sadar</SelectItem>
-						<SelectItem value="Sitakunda">Sitakunda</SelectItem>
-						<SelectItem value="Sonagazi">Sonagazi</SelectItem>
-						<SelectItem value="Sonatala">Sonatala</SelectItem>
-						<SelectItem value="Sreemangal">Sreemangal</SelectItem>
-						<SelectItem value="Subarnachar">Subarnachar</SelectItem>
-						<SelectItem value="Sundarganj">Sundarganj</SelectItem>
-						<SelectItem value="Sylhet Sadar">Sylhet Sadar</SelectItem>
-						<SelectItem value="Tangail Sadar">Tangail Sadar</SelectItem>
-						<SelectItem value="Tarail">Tarail</SelectItem>
-						<SelectItem value="Tarash">Tarash</SelectItem>
-						<SelectItem value="Tekerhat">Tekerhat</SelectItem>
-						<SelectItem value="Teknaf">Teknaf</SelectItem>
-						<SelectItem value="Tetulia">Tetulia</SelectItem>
-						<SelectItem value="Thakurgaon Sadar">Thakurgaon Sadar</SelectItem>
-						<SelectItem value="Tongibari">Tongibari</SelectItem>
-						<SelectItem value="Tungipara">Tungipara</SelectItem>
-						<SelectItem value="Ujirpur">Ujirpur</SelectItem>
-						<SelectItem value="Ulipur">Ulipur</SelectItem>
-						<SelectItem value="Zianagar">Zianagar</SelectItem>
-					</SelectContent>
-				</Select>
-                <Select
-					onValueChange={(value) => setFormData({ ...formData, bloodGroup: value })}
-					required
-				>
-					<SelectTrigger className="w-full">
-						<SelectValue placeholder="Select Blood Group" />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="A+">A+</SelectItem>
-						<SelectItem value="A-">A-</SelectItem>
-						<SelectItem value="B+">B+</SelectItem>
-						<SelectItem value="B-">B-</SelectItem>
-						<SelectItem value="O+">O+</SelectItem>
-						<SelectItem value="O-">O-</SelectItem>
-						<SelectItem value="AB+">AB+</SelectItem>
-						<SelectItem value="AB-">AB-</SelectItem>
-					</SelectContent>
-				</Select>
+						{/* Hospital Name */}
+						<motion.div
+							variants={fadeInUp}
+							transition={{ delay: 0.2 }}
+							className="space-y-2"
+						>
+							<label className="block text-sm font-medium text-gray-700 flex items-center">
+								<FaHospital className="mr-2 text-red-500" />
+								Hospital Name
+							</label>
+							<div className="relative">
+								<input
+									type="text"
+									{...register("hospitalName", { required: true })}
+									placeholder="Enter hospital name"
+									className={`w-full px-4 py-3 rounded-lg border ${
+										errors.hospitalName ? "border-red-500" : "border-gray-300"
+									} focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent`}
+								/>
+								{errors.hospitalName && (
+									<p className="mt-1 text-xs text-red-500">
+										Hospital name is required
+									</p>
+								)}
+							</div>
+						</motion.div>
 
-				<Input
-					label="Hospital Name"
-					placeholder="Enter hospital name"
-					value={formData.hospitalName}
-					onChange={(e) =>
-						setFormData({ ...formData, hospitalName: e.target.value })
-					}
-					required
-				/>
-				<Input
-					label="Full Address"
-					placeholder="Enter full address"
-					value={formData.fullAddress}
-					onChange={(e) =>
-						setFormData({ ...formData, fullAddress: e.target.value })
-					}
-					required
-				/>
-				<Input
-					label="Donation Date"
-					type="date"
-					value={formData.donationDate}
-					onChange={(e) =>
-						setFormData({ ...formData, donationDate: e.target.value })
-					}
-					required
-				/>
-				<Input
-					label="Donation Time"
-					type="time"
-					value={formData.donationTime}
-					onChange={(e) =>
-						setFormData({ ...formData, donationTime: e.target.value })
-					}
-					required
-				/>
-				<Textarea
-					label="Request Message"
-					placeholder="Write a short message..."
-					value={formData.requestMessage}
-					onChange={(e) =>
-						setFormData({ ...formData, requestMessage: e.target.value })
-					}
-					required
-				/>
+						{/* Hospital Address */}
+						<motion.div
+							variants={fadeInUp}
+							transition={{ delay: 0.25 }}
+							className="space-y-2"
+						>
+							<label className="block text-sm font-medium text-gray-700 flex items-center">
+								<FaMapMarkerAlt className="mr-2 text-red-500" />
+								Hospital Address
+							</label>
+							<div className="relative">
+								<input
+									type="text"
+									{...register("hospitalAddress", { required: true })}
+									placeholder="Enter hospital address"
+									className={`w-full px-4 py-3 rounded-lg border ${
+										errors.hospitalAddress
+											? "border-red-500"
+											: "border-gray-300"
+									} focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent`}
+								/>
+								{errors.hospitalAddress && (
+									<p className="mt-1 text-xs text-red-500">
+										Hospital address is required
+									</p>
+								)}
+							</div>
+						</motion.div>
 
-				<Button
-					type="submit"
-					className="w-full bg-blue-500 text-white hover:bg-blue-600"
-				>
-					Submit Request
-				</Button>
-			</form>
-		</div>
+						{/* Date */}
+						<motion.div
+							variants={fadeInUp}
+							transition={{ delay: 0.3 }}
+							className="space-y-2"
+						>
+							<label className="block text-sm font-medium text-gray-700 flex items-center">
+								<FaCalendarAlt className="mr-2 text-red-500" />
+								Donation Date
+							</label>
+							<div className="relative">
+								<input
+									type="date"
+									{...register("donationDate", { required: true })}
+									className={`w-full px-4 py-3 rounded-lg border ${
+										errors.donationDate ? "border-red-500" : "border-gray-300"
+									} focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent`}
+								/>
+								{errors.donationDate && (
+									<p className="mt-1 text-xs text-red-500">
+										Donation date is required
+									</p>
+								)}
+							</div>
+						</motion.div>
+
+						{/* Time */}
+						<motion.div
+							variants={fadeInUp}
+							transition={{ delay: 0.35 }}
+							className="space-y-2"
+						>
+							<label className="block text-sm font-medium text-gray-700 flex items-center">
+								<FaClock className="mr-2 text-red-500" />
+								Donation Time
+							</label>
+							<div className="relative">
+								<input
+									type="time"
+									{...register("donationTime", { required: true })}
+									className={`w-full px-4 py-3 rounded-lg border ${
+										errors.donationTime ? "border-red-500" : "border-gray-300"
+									} focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent`}
+								/>
+								{errors.donationTime && (
+									<p className="mt-1 text-xs text-red-500">
+										Donation time is required
+									</p>
+								)}
+							</div>
+						</motion.div>
+
+						{/* District */}
+						<motion.div
+							variants={fadeInUp}
+							transition={{ delay: 0.4 }}
+							className="space-y-2"
+						>
+							<label className="block text-sm font-medium text-gray-700 flex items-center">
+								<FaMapMarkerAlt className="mr-2 text-red-500" />
+								District
+							</label>
+							<div className="relative">
+								<select
+									{...register("district", { required: true })}
+									className={`w-full px-4 py-3 rounded-lg border ${
+										errors.district ? "border-red-500" : "border-gray-300"
+									} focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent`}
+								>
+									<option value="">Select district</option>
+									{districts.map((district) => (
+										<option key={district.id} value={district.id}>
+											{district.name}
+										</option>
+									))}
+								</select>
+								{errors.district && (
+									<p className="mt-1 text-xs text-red-500">
+										District is required
+									</p>
+								)}
+							</div>
+						</motion.div>
+
+						{/* Upazila */}
+						<motion.div
+							variants={fadeInUp}
+							transition={{ delay: 0.45 }}
+							className="space-y-2"
+						>
+							<label className="block text-sm font-medium text-gray-700 flex items-center">
+								<FaMapMarkerAlt className="mr-2 text-red-500" />
+								Upazila
+							</label>
+							<div className="relative">
+								<select
+									{...register("upazila", { required: true })}
+									className={`w-full px-4 py-3 rounded-lg border ${
+										errors.upazila ? "border-red-500" : "border-gray-300"
+									} focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent`}
+									disabled={!selectedDistrict}
+								>
+									<option value="">
+										{selectedDistrict
+											? "Select upazila"
+											: "Select district first"}
+									</option>
+									{filteredUpazilas.map((upazila) => (
+										<option key={upazila.id} value={upazila.id}>
+											{upazila.name}
+										</option>
+									))}
+								</select>
+								{errors.upazila && (
+									<p className="mt-1 text-xs text-red-500">
+										Upazila is required
+									</p>
+								)}
+							</div>
+						</motion.div>
+					</div>
+
+					{/* Message */}
+					<motion.div
+						variants={fadeInUp}
+						transition={{ delay: 0.5 }}
+						className="mt-6 space-y-2"
+					>
+						<label className="block text-sm font-medium text-gray-700 flex items-center">
+							<FaNotesMedical className="mr-2 text-red-500" />
+							Request Message
+						</label>
+						<div className="relative">
+							<textarea
+								{...register("requestMessage", { required: true })}
+								rows="4"
+								placeholder="Enter details about the donation request..."
+								className={`w-full px-4 py-3 rounded-lg border ${
+									errors.requestMessage ? "border-red-500" : "border-gray-300"
+								} focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent`}
+							></textarea>
+							{errors.requestMessage && (
+								<p className="mt-1 text-xs text-red-500">
+									Request message is required
+								</p>
+							)}
+						</div>
+					</motion.div>
+
+					{/* Submit Button */}
+					<motion.div
+						variants={fadeInUp}
+						transition={{ delay: 0.55 }}
+						className="mt-8 flex flex-col md:flex-row gap-4 items-center justify-between"
+					>
+						<div className="flex items-start bg-blue-50 text-blue-700 p-3 rounded-lg">
+							<FaInfoCircle
+								className="flex-shrink-0 mr-2 mt-0.5"
+								fontSize="small"
+							/>
+							<p className="text-sm">
+								Your request will be reviewed and published immediately. You'll
+								be notified when a donor accepts your request.
+							</p>
+						</div>
+
+						<Button
+							type="submit"
+							className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 py-3 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all"
+							disabled={isSubmitting}
+						>
+							{isSubmitting ? (
+								<>
+									<span className="animate-spin h-5 w-5 mr-2 border-t-2 border-white rounded-full"></span>
+									Creating...
+								</>
+							) : (
+								<>
+									<FaPaperPlane className="mr-1" />
+									Create Request
+								</>
+							)}
+						</Button>
+					</motion.div>
+				</form>
+
+				{/* Info Panel */}
+				<div className="bg-gray-50 border-t border-gray-100 px-6 py-4 flex justify-between items-center text-sm text-gray-600">
+					<div className="flex items-center">
+						<FaCheckCircle className="text-green-500 mr-2" />
+						All information will be kept confidential
+					</div>
+					<div>Need help? Contact support</div>
+				</div>
+			</div>
+		</motion.div>
 	);
 };
 
